@@ -1,9 +1,11 @@
 import React from 'react';
 
+import EditorScreen from './screens/editor_screen';
+
 function App() {
   return (
     <div>
-      <p>Voice Text Editor</p>
+      <EditorScreen />
     </div>
   );
 }
