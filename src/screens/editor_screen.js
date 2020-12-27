@@ -3,45 +3,20 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-
-// import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
-// import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
-// import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
-// import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
-
 import "./style.css";
 
 const EditorScreen = () => {
-  const [content, setContent] = useState("");
-
   return (
-    <div className="container  mt-5">
-
+    <div className="container mt-4">
       <div className="row">
         <div className="col-md-7">
-          <CKEditor
-            editor={ClassicEditor}
-            data={content}
-            onChange={(event, editor) => {
-              const data = editor.getData();
-              setContent(data);
-            }}
-          />
-
+          <div className="row">
+            <div className="col-md-6">
+              <SelectLanguage />
+            </div>
+          </div>
           <div className="mt-3">
-            <div className="row">
-              <div className="col-md-3">
-                <button className="btn btn-primary btn-sm mt">Start</button>
-              </div>
-              <div className="col-md-9">
-                <ActionButton />
-              </div>
-            </div>
-            <div className="row mt-3">
-              <div className="col-md-6">
-                <SelectLanguage />
-              </div>
-            </div>
+          <Editor />
           </div>
         </div>
       </div>
@@ -50,6 +25,34 @@ const EditorScreen = () => {
 };
 
 export default EditorScreen;
+
+function Editor() {
+  const [content, setContent] = useState(null);
+
+  return (
+    <div className="row">
+      <div className="col-md-12">
+        <CKEditor
+          editor={ClassicEditor}
+          data={content}
+          onChange={(event, editor) => {
+            const data = editor.getData();
+            setContent(data);
+          }}
+        />
+
+        <div className="row mt-2">
+          <div className="col-md-3">
+            <button className="btn btn-primary btn-sm mt">Start</button>
+          </div>
+          <div className="col-md-9">
+            <ActionButton />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function ActionButton() {
   return (
@@ -79,8 +82,6 @@ function SelectLanguage() {
     </div>
   );
 }
-
-
 
 function AppToolTip({ content, toolTip }) {
   return (
