@@ -14,7 +14,7 @@ export default function ClearButton({ editorState, onChange }) {
 
   return (
     <button className="btn btn-info btn-sm my-2 mx-2" onClick={handleClear}>
-      Clear
+      <i className="fa fa-ban" aria-hidden="true"></i> Clear
     </button>
   );
 }

@@ -1,21 +1,43 @@
 import React, { useState } from "react";
-import { EditorState } from "draft-js";
+import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
+import axios from "axios";
+import draftToHtml from "draftjs-to-html";
 
 import "./draft_editor.css";
 import VoiceEditor from "./voice_editor";
 import ClearButton from "./clear_button";
+import ActionButtons from "./action_buttons";
+import { toolbarOptions } from "../utils/toolbar";
 
 const DraftEditor = ({ language }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [error, setError] = useState();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = () => {};
-  const handleClear = () => {
-    const state = EditorState.createEmpty();
-    setEditorState(state);
+
+  const handleEmail = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.post("http://localhost:8000/api/send-email", {
+        message: getHTMLFromState(),
+      });
+      setIsLoading(false);
+      setIsSuccess(true);
+      setError("");
+    } catch (ex) {
+      setIsLoading(false);
+      setIsSuccess(false);
+    }
   };
-  const handleEmail = () => {};
+
   const handlePrint = () => {};
+
+  const getHTMLFromState = () => {
+    return draftToHtml(convertToRaw(editorState.getCurrentContent()));
+  };
 
   return (
     <div>
@@ -28,41 +50,21 @@ const DraftEditor = ({ language }) => {
         toolbarCustomButtons={[<VoiceEditor />, <ClearButton />]}
       />
       <div className="my-3">
-        <ActionButtons onClear={handleClear} />
+        <ActionButtons
+          onEmail={handleEmail}
+          disabled={!editorState.getCurrentContent().hasText()}
+        />
       </div>
+
+      {isLoading && <div className="spinner-border text-center"></div>}
+      {isSuccess && (
+        <div className="alert alert-success my-3">
+          Email is sent successfully
+        </div>
+      )}
+      {error && <div className="alert alert-danger my-3">{error}</div>}
     </div>
   );
 };
 
 export default DraftEditor;
-
-function ActionButtons({ onSave, onClear, onEmail, onPrint }) {
-  return (
-    <React.Fragment>
-      <button className="btn btn-link btn-md font-weight-bold">Save</button>
-      <button
-        className="btn btn-link btn-md font-weight-bold"
-        onClick={onClear}
-      >
-        Clear
-      </button>
-      <button className="btn btn-link btn-md font-weight-bold">Email</button>
-      <button className="btn btn-link btn-md font-weight-bold">Print</button>
-    </React.Fragment>
-  );
-}
-
-const toolbarOptions = {
-  options: [
-    "inline",
-    "list",
-    "textAlign",
-    "emoji",
-    "image",
-    "remove",
-    "history",
-  ],
-  inline: {
-    options: ["bold", "italic", "underline"],
-  },
-};
