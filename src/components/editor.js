@@ -42,10 +42,17 @@ function Editor({ language }) {
     <div className="row">
       <div className="col-md-12">
         <CKEditor
+          config={{
+            ckfinder: {
+              uploadUrl:
+                "https://example.com/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images&responseType=json",
+            },
+          }}
           editor={ClassicEditor}
           data={content}
           onChange={(event, editor) => {
             const data = editor.getData();
+            console.log(data);
             setContent(data);
           }}
         />
