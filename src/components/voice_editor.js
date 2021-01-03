@@ -7,7 +7,7 @@ const browserSpeechRecognition = new BrowserSpeechRecognition();
 const recognition = browserSpeechRecognition.getRecognition();
 recognition.continuous = true;
 
-export default function VoiceEditor({ editorState, onChange }) {
+export default function VoiceEditor({ editorState, onChange, lang }) {
   const [isListening, setIsListening] = useState(false);
 
   const handleListening = () => {

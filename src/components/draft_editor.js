@@ -47,7 +47,7 @@ const DraftEditor = ({ language }) => {
         editorClassName="editor"
         onEditorStateChange={setEditorState}
         toolbar={toolbarOptions}
-        toolbarCustomButtons={[<VoiceEditor />, <ClearButton />]}
+        toolbarCustomButtons={[<VoiceEditor lang={language} />, <ClearButton />]}
       />
       <div className="my-3">
         <ActionButtons
