@@ -39,7 +39,7 @@ export default function VoiceEditor({ editorState, onChange }) {
       onClick={handleListening}
     >
       <i
-        class={`fa fa-microphone${isListening ? "-slash" : ""}`}
+        className={`fa fa-microphone${isListening ? "-slash" : ""}`}
         aria-hidden="true"
       ></i>{" "}
       {isListening && <span className="spinner-grow spinner-grow-sm"></span>}
