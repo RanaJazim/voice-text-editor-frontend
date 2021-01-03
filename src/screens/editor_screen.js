@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import Editor from "../components/editor";
+import DraftEditor from "../components/draft_editor";
 import SelectLanguage from "../components/select_language";
 
 const EditorScreen = () => {
@@ -20,7 +21,7 @@ const EditorScreen = () => {
             </div>
           </div>
           <div className="mt-3">
-            <Editor language={language} />
+            <DraftEditor language={language} />
           </div>
         </div>
       </div>
