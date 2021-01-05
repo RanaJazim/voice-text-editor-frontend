@@ -12,28 +12,53 @@ import { toolbarOptions } from "../utils/toolbar";
 
 const DraftEditor = ({ language }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [error, setError] = useState();
+  const [isCopy, setIsCopy] = useState(false);
+  const [error, setError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = () => {};
+  const handleSave = async () => {
+    console.log("save content to file on the server ..");
+    setIsLoading(true);
+
+    await apiCall(() => {
+      return axios.post("http://localhost:8000/api/save-content", {
+        content: getHTMLFromState(),
+      });
+    });
+  };
 
   const handleEmail = async () => {
     setIsLoading(true);
-    try {
-      const res = await axios.post("http://localhost:8000/api/send-email", {
+
+    await apiCall(() => {
+      return axios.post("http://localhost:8000/api/send-email", {
         message: getHTMLFromState(),
       });
-      setIsLoading(false);
-      setIsSuccess(true);
-      setError("");
-    } catch (ex) {
-      setIsLoading(false);
-      setIsSuccess(false);
-    }
+    });
   };
 
-  const handlePrint = () => {};
+  const handleCopy = () => {
+    setIsCopy(true);
+    setTimeout(() => {
+      setIsCopy(false);
+    }, 3000);
+  };
+
+  const apiCall = async (request) => {
+    try {
+      await request();
+      console.log("done");
+      setIsLoading(false);
+      setIsSuccess(true);
+      setError(false);
+    } catch (ex) {
+      console.log("error");
+      setIsLoading(false);
+      setIsSuccess(false);
+      setError(true);
+    }
+  };
 
   const getHTMLFromState = () => {
     return draftToHtml(convertToRaw(editorState.getCurrentContent()));
@@ -47,22 +72,31 @@ const DraftEditor = ({ language }) => {
         editorClassName="editor"
         onEditorStateChange={setEditorState}
         toolbar={toolbarOptions}
-        toolbarCustomButtons={[<VoiceEditor lang={language} />, <ClearButton />]}
+        toolbarCustomButtons={[
+          <VoiceEditor lang={language} />,
+          <ClearButton />,
+        ]}
       />
       <div className="my-3">
         <ActionButtons
           onEmail={handleEmail}
+          onSave={handleSave}
+          onCopyToClipboard={handleCopy}
+          currentContent={getHTMLFromState()}
           disabled={!editorState.getCurrentContent().hasText()}
         />
       </div>
 
       {isLoading && <div className="spinner-border text-center"></div>}
       {isSuccess && (
-        <div className="alert alert-success my-3">
-          Email is sent successfully
+        <div className="alert alert-success my-3">Succesfull ...</div>
+      )}
+      {error && (
+        <div className="alert alert-danger my-3">
+          Some error while performing action ..
         </div>
       )}
-      {error && <div className="alert alert-danger my-3">{error}</div>}
+      {isCopy && <p className="alert alert-success">Copy to clipboard</p>}
     </div>
   );
 };
