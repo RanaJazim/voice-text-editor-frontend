@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import FileSaver from "file-saver";
 import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import axios from "axios";
@@ -21,11 +22,25 @@ const DraftEditor = ({ language }) => {
     console.log("save content to file on the server ..");
     setIsLoading(true);
 
-    await apiCall(() => {
-      return axios.post("http://localhost:8000/api/save-content", {
-        content: getHTMLFromState(),
-      });
-    });
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/save-content",
+        {
+          content: getHTMLFromState(),
+        },
+        { responseType: "blob" }
+      );
+      FileSaver.saveAs(res.data, "content.txt");
+
+      setIsLoading(false);
+      setIsSuccess(true);
+      setError(false);
+    } catch (ex) {
+      console.log("error");
+      setIsLoading(false);
+      setIsSuccess(false);
+      setError(true);
+    }
   };
 
   const handleEmail = async () => {
@@ -47,8 +62,9 @@ const DraftEditor = ({ language }) => {
 
   const apiCall = async (request) => {
     try {
-      await request();
+      const res = await request();
       console.log("done");
+      console.log(res);
       setIsLoading(false);
       setIsSuccess(true);
       setError(false);

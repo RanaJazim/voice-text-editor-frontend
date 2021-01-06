@@ -25,13 +25,6 @@ export default function ActionButtons({
           Copy
         </button>
       </CopyToClipboard>
-      <button
-        className="btn btn-link btn-md font-weight-bold"
-        onClick={onEmail}
-        disabled={disabled}
-      >
-        Email
-      </button>
     </React.Fragment>
   );
 }
